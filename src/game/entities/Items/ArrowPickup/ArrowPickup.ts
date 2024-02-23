@@ -9,6 +9,7 @@ export class ArrowPickup extends Phaser.GameObjects.Sprite {
     super(scene, x, y, "arrow");
     this.scene = scene;
     this.id = id;
+    this.setScale(10);
     this.setOrigin(0.5, 0.5);
     this.setDepth(4);
     this.scene.add.existing(this);
@@ -45,7 +46,6 @@ export class ArrowPickup extends Phaser.GameObjects.Sprite {
     });
   }
   get() {
-    this.scene.emitter.emitSmoke(this.x, this.y);
     this.remove();
   }
 }

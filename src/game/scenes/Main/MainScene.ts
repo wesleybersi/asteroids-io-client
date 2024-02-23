@@ -12,9 +12,8 @@ import Emitter from "../../entities/Emitter/Emitter";
 import { ProjectileArrow } from "../../entities/Projectile/Arrow";
 
 import { Pickup } from "../../entities/Pickup/Pickup";
-import { Wall } from "../../entities/Wall/wall";
 
-import { Pot } from "../../entities/Pot/Pot";
+import { Asteroid } from "../../entities/Asteroid/Asteroid";
 
 import ProjectilePot from "../../entities/Projectile/Pot";
 
@@ -35,6 +34,15 @@ export default class MainScene extends Phaser.Scene {
   emitter: Emitter = new Emitter(this);
   enableZoom = false;
 
+  deadzoneOffset = { velocityX: 0, velocityY: 0, x: 0, y: 0 };
+
+  receiveTracker = false;
+
+  starLayerA!: Phaser.GameObjects.Container;
+  starLayerB!: Phaser.GameObjects.Container;
+  starLayerC!: Phaser.GameObjects.Container;
+  starLayerD!: Phaser.GameObjects.Container;
+
   //Controls
   buttons = { shift: false, r: false };
   cursors: Direction[] = [];
@@ -45,11 +53,13 @@ export default class MainScene extends Phaser.Scene {
   playersByID = new Map<string, Player>();
 
   //Pots
-  potsByPos = new Map<string, Pot>();
+  potsByPos = new Map<string, Asteroid>();
 
   //Matrix
   objectMatrix: string[][] = [];
   spriteGridMatrix: string[][] = []; // <row,col, sprite>
+
+  asteroidsById = new Map<string, Asteroid>();
 
   //Pickups
   pickupsByPos = new Map<string, Pickup>();
@@ -73,7 +83,7 @@ export default class MainScene extends Phaser.Scene {
     this.cameras.main.stopFollow();
 
     for (const [, player] of this.playersByID) {
-      player.delete();
+      player.remove();
     }
     for (const [, pickup] of this.pickupsByPos) {
       pickup.remove();
@@ -95,7 +105,7 @@ export default class MainScene extends Phaser.Scene {
     } else return true;
   }
 
-  update() {
+  update(time: number, delta: number) {
     if (!this.hasLoaded) return;
     const camera = this.cameras.main;
     this.frameCounter++;
@@ -103,13 +113,13 @@ export default class MainScene extends Phaser.Scene {
       this.frameCounter = 0;
     }
     camera.deadzone?.setSize(
-      camera.worldView.width * 0.25,
-      camera.worldView.height * 0.15
+      camera.worldView.width * 0.1,
+      camera.worldView.height * 0.75
     );
 
-    if (this.frameCounter === 59) {
-      camera.setLerp(0.1);
-    }
+    // camera.startFollow(this.player, true);
+    camera.setLerp(0.05);
+
     if (this.deadzoneRect && camera.deadzone) {
       this.deadzoneRect.x = camera.deadzone.x + camera.deadzone.width / 2;
       this.deadzoneRect.y = camera.deadzone.y + camera.deadzone.height / 2;
@@ -119,6 +129,31 @@ export default class MainScene extends Phaser.Scene {
       this.deadzoneRect.setOrigin(0.5);
       this.deadzoneRect.setAlpha(0);
     }
+
+    // this.starLayerA.x = this.cameras.main.scrollX * 0;
+    // this.starLayerA.y = this.cameras.main.scrollY * 0;
+
+    // this.starLayerB.x = this.cameras.main.scrollX * 0.075;
+    // this.starLayerB.y = this.cameras.main.scrollY * 0.075;
+
+    // this.starLayerC.x = this.cameras.main.scrollX * 0.15;
+    // this.starLayerC.y = this.cameras.main.scrollY * 0.15;
+
+    this.starLayerA.x = this.cameras.main.scrollX * 0.4;
+    this.starLayerA.y = this.cameras.main.scrollY * 0.4;
+    // this.starLayerA.setAlpha(0.75);
+
+    this.starLayerB.x = this.cameras.main.scrollX * 0.475;
+    this.starLayerB.y = this.cameras.main.scrollY * 0.475;
+    // this.starLayerB.setAlpha(0.5);
+
+    this.starLayerC.x = this.cameras.main.scrollX * 0.55;
+    this.starLayerC.y = this.cameras.main.scrollY * 0.55;
+    // this.starLayerC.setAlpha(0.25);
+
+    this.starLayerD.x = this.cameras.main.scrollX * 0.625;
+    this.starLayerD.y = this.cameras.main.scrollY * 0.625;
+    // this.starLayerD.setAlpha(0.1);
 
     // if (this.buttons.r) {
     //   this.respawnCounter--;

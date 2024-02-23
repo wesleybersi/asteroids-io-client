@@ -10,6 +10,7 @@ export class Heart extends Phaser.GameObjects.Sprite {
     this.id = id;
     this.setOrigin(0.5, 0.5);
     this.setDepth(4);
+    this.setScale(10);
     this.scene.add.existing(this);
 
     this.scene.events.on(`${id}`, (type: "get" | "flash") => {
@@ -37,7 +38,6 @@ export class Heart extends Phaser.GameObjects.Sprite {
     });
   }
   get() {
-    this.scene.emitter.emitSmoke(this.x, this.y);
     this.remove();
   }
   remove() {

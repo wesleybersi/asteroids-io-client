@@ -10,6 +10,7 @@ export class Coin extends Phaser.GameObjects.Sprite {
     this.id = id;
     this.setOrigin(0.5, 0.5);
     this.setDepth(4);
+    this.setScale(10);
     this.createAnimation();
     this.anims.play("spin");
     this.scene.add.existing(this);
@@ -29,7 +30,6 @@ export class Coin extends Phaser.GameObjects.Sprite {
   }
 
   get() {
-    this.scene.emitter.emitSmoke(this.x, this.y);
     this.remove();
   }
   remove() {
